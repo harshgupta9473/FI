@@ -2,13 +2,17 @@ package di
 
 import (
 	"database/sql"
+	"fmt"
 	"github.com/harshgupta9473/fi/configs"
+	logger2 "github.com/harshgupta9473/fi/logger"
 	"github.com/harshgupta9473/fi/repository"
 	"github.com/harshgupta9473/fi/services"
 )
 
 type Container struct {
 	DB *sql.DB
+
+	Logger *logger2.Logger
 
 	TableCreated bool
 
@@ -28,6 +32,12 @@ func NewContainer(env *configs.Config) (*Container, error) {
 	container := &Container{
 		DB: db,
 	}
+
+	logger, err := logger2.NewLogger()
+	if err != nil {
+		return nil, fmt.Errorf("error in initializing the logger: %v", err)
+	}
+	container.Logger = logger
 
 	err = container.CreateAllTables()
 	if err != nil {
