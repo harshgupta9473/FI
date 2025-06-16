@@ -7,4 +7,4 @@ db_config:
  password: abcdefgh150
  dbname: makerable
  sslmode: disable
-jwtkey: qwertyuiop 
+

@@ -10,7 +10,7 @@ import (
 )
 
 type Claims struct {
-	UserID int64 `json:"user_id"`
+	UserName string `json:"username"`
 	jwt.RegisteredClaims
 }
 
@@ -24,15 +24,15 @@ func AuthMiddleware(next http.Handler) http.Handler {
 		if err != nil {
 
 		}
-		ctx := context.WithValue(r.Context(), "userID", claim.UserID)
+		ctx := context.WithValue(r.Context(), "userID", claim.UserName)
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})
 }
 
-func CreateJWTToken(userID int64) (string, error) {
+func CreateJWTToken(username string) (string, error) {
 	secretKey := []byte(os.Getenv("SECRET_KEY"))
 	claims := Claims{
-		UserID: userID,
+		UserName: username,
 		RegisteredClaims: jwt.RegisteredClaims{
 			ExpiresAt: jwt.NewNumericDate(time.Now().Add(15 * time.Minute)),
 		},

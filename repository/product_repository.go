@@ -1,6 +1,7 @@
 package repository
 
 import (
+	"context"
 	"database/sql"
 	"errors"
 	"fmt"
@@ -12,10 +13,10 @@ type ProductsRepository struct {
 }
 
 type ProductsRepoIntf interface {
-	AddProduct(product *dto.Product) (int64, error)
-	GetProducts(limit int, offset int) ([]*dto.Product, error)
-	UpdateProductQuantityByID(id int64, quantity int64) error
-	GetProductByID(id int64) (*dto.Product, error)
+	AddProduct(ctx context.Context, product *dto.Product) (int64, error)
+	GetProducts(ctx context.Context, limit int, offset int) ([]*dto.Product, error)
+	UpdateProductQuantityByID(ctx context.Context, id int64, quantity int64) error
+	GetProductByID(ctx context.Context, id int64) (*dto.Product, error)
 }
 
 func NewProductsRepository(db *sql.DB) ProductsRepoIntf {
@@ -24,7 +25,7 @@ func NewProductsRepository(db *sql.DB) ProductsRepoIntf {
 	}
 }
 
-func (p *ProductsRepository) AddProduct(product *dto.Product) (int64, error) {
+func (p *ProductsRepository) AddProduct(ctx context.Context, product *dto.Product) (int64, error) {
 	query := `
 		INSERT INTO products (name, type, sku, image_url, description, quantity, price)
 		VALUES ($1, $2, $3, $4, $5, $6, $7)
@@ -32,7 +33,8 @@ func (p *ProductsRepository) AddProduct(product *dto.Product) (int64, error) {
 	`
 
 	var id int64
-	err := p.db.QueryRow(
+	err := p.db.QueryRowContext(
+		ctx,
 		query,
 		product.Name,
 		product.Type,
@@ -46,11 +48,11 @@ func (p *ProductsRepository) AddProduct(product *dto.Product) (int64, error) {
 	return id, err
 }
 
-func (p *ProductsRepository) GetProducts(limit int, offset int) ([]*dto.Product, error) {
+func (p *ProductsRepository) GetProducts(ctx context.Context, limit int, offset int) ([]*dto.Product, error) {
 	query := `SELECT id, name, type, sku, image_url, description, quantity, price FROM products
               ORDER BY id
               LIMIT $1 OFFSET $2`
-	rows, err := p.db.Query(query, limit, offset)
+	rows, err := p.db.QueryContext(ctx, query, limit, offset)
 	if err != nil {
 		return nil, err
 	}
@@ -78,13 +80,13 @@ func (p *ProductsRepository) GetProducts(limit int, offset int) ([]*dto.Product,
 	return products, nil
 }
 
-func (p *ProductsRepository) UpdateProductQuantityByID(id int64, quantity int64) error {
+func (p *ProductsRepository) UpdateProductQuantityByID(ctx context.Context, id int64, quantity int64) error {
 	query := `
 		UPDATE products
 		SET quantity = $1
 		WHERE id = $2
 	`
-	result, err := p.db.Exec(query, quantity, id)
+	result, err := p.db.ExecContext(ctx, query, quantity, id)
 	if err != nil {
 		return err
 	}
@@ -101,18 +103,20 @@ func (p *ProductsRepository) UpdateProductQuantityByID(id int64, quantity int64)
 	return nil
 }
 
-func (p *ProductsRepository) GetProductByID(id int64) (*dto.Product, error) {
+func (p *ProductsRepository) GetProductByID(ctx context.Context, id int64) (*dto.Product, error) {
 	query := `SELECT id, name, type, sku, image_url, description, quantity, price FROM products WHERE id=$1 `
 	var product dto.Product
-	err := p.db.QueryRow(query, id).Scan(&product.ID,
-		product.Name,
-		product.Type,
-		product.SKU,
-		product.ImageURL,
-		product.Description,
-		product.Quantity,
-		product.Price,
+	err := p.db.QueryRowContext(ctx, query, id).Scan(
+		&product.ID,
+		&product.Name,
+		&product.Type,
+		&product.SKU,
+		&product.ImageURL,
+		&product.Description,
+		&product.Quantity,
+		&product.Price,
 	)
+
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return nil, nil

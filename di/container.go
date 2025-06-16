@@ -28,7 +28,7 @@ func NewContainer(env *configs.Config) (*Container, error) {
 	container := &Container{
 		DB: db,
 	}
-	
+
 	err = container.CreateAllTables()
 	if err != nil {
 		return nil, err

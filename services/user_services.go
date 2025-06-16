@@ -1,6 +1,7 @@
 package services
 
 import (
+	"context"
 	"fmt"
 	"github.com/harshgupta9473/fi/dto"
 	"github.com/harshgupta9473/fi/repository"
@@ -12,8 +13,8 @@ type UserService struct {
 }
 
 type UserServiceIntf interface {
-	CreateUserAccount(user *dto.User) error
-	LoginUser(user *dto.User) error
+	CreateUserAccount(ctx context.Context, user *dto.User) error
+	LoginUser(ctx context.Context, user *dto.User) error
 }
 
 func NewUserService(userRepo repository.UsersRepoIntf) UserServiceIntf {
@@ -22,13 +23,13 @@ func NewUserService(userRepo repository.UsersRepoIntf) UserServiceIntf {
 	}
 }
 
-func (u *UserService) CreateUserAccount(user *dto.User) error {
+func (u *UserService) CreateUserAccount(ctx context.Context, user *dto.User) error {
 	//if user already exists
-	user, err := u.UserRepo.GetUserByUsername(user.Username)
+	userDB, err := u.UserRepo.GetUserByUsername(ctx, user.Username)
 	if err != nil {
 		return fmt.Errorf("error in checking the username status i.e. if it exists or not")
 	}
-	if user != nil {
+	if userDB != nil {
 		return fmt.Errorf("username already exists")
 	}
 	encryptedPassword, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
@@ -37,7 +38,7 @@ func (u *UserService) CreateUserAccount(user *dto.User) error {
 	}
 	user.Password = string(encryptedPassword)
 
-	err = u.UserRepo.AddUser(user)
+	err = u.UserRepo.AddUser(ctx, user)
 	if err != nil {
 		return fmt.Errorf("error creating user account")
 	}
@@ -46,8 +47,8 @@ func (u *UserService) CreateUserAccount(user *dto.User) error {
 
 }
 
-func (u *UserService) LoginUser(user *dto.User) error {
-	userfromDB, err := u.UserRepo.GetUserByUsername(user.Username)
+func (u *UserService) LoginUser(ctx context.Context, user *dto.User) error {
+	userfromDB, err := u.UserRepo.GetUserByUsername(ctx, user.Username)
 	if err != nil {
 		return fmt.Errorf("error in getting the user details")
 	}

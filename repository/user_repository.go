@@ -1,6 +1,7 @@
 package repository
 
 import (
+	"context"
 	"database/sql"
 	"errors"
 	"github.com/harshgupta9473/fi/dto"
@@ -11,8 +12,8 @@ type UsersRepository struct {
 }
 
 type UsersRepoIntf interface {
-	AddUser(user *dto.User) error
-	GetUserByUsername(username string) (*dto.User, error)
+	AddUser(ctx context.Context, user *dto.User) error
+	GetUserByUsername(ctx context.Context, username string) (*dto.User, error)
 }
 
 func NewUsersRepository(db *sql.DB) UsersRepoIntf {
@@ -21,19 +22,19 @@ func NewUsersRepository(db *sql.DB) UsersRepoIntf {
 	}
 }
 
-func (u *UsersRepository) AddUser(user *dto.User) error {
+func (u *UsersRepository) AddUser(ctx context.Context, user *dto.User) error {
 	query := `
 		INSERT INTO users (username, password)
 		VALUES ($1, $2)
 	`
-	_, err := u.db.Exec(query, user.Username, user.Password)
+	_, err := u.db.ExecContext(ctx, query, user.Username, user.Password)
 	if err != nil {
 		return err
 	}
 	return nil
 }
 
-func (u *UsersRepository) GetUserByUsername(username string) (*dto.User, error) {
+func (u *UsersRepository) GetUserByUsername(ctx context.Context, username string) (*dto.User, error) {
 	query := `
 		SELECT id, username, password
 		FROM users
@@ -41,7 +42,7 @@ func (u *UsersRepository) GetUserByUsername(username string) (*dto.User, error) 
 	`
 
 	var user dto.User
-	err := u.db.QueryRow(query, username).Scan(&user.ID, &user.Username, &user.Password)
+	err := u.db.QueryRowContext(ctx, query, username).Scan(&user.ID, &user.Username, &user.Password)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return nil, nil

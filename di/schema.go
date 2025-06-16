@@ -10,7 +10,7 @@ func (c *Container) CreateAllTables() error {
 	if err != nil {
 		return err
 	}
-	err = c.CreateProductsTable()
+	err = c.createProductsTable()
 	if err != nil {
 		return err
 	}
@@ -18,28 +18,31 @@ func (c *Container) CreateAllTables() error {
 }
 
 func (c *Container) createUserAuthTable() error {
-	query := `CREATE users table if not exists(
-	username VARCHAR(255) PRIMARY KEY NOT NULL UNIQUE,
-    password VARCHAR(255) NOT NULL,
-    )`
+	query := `
+	CREATE TABLE IF NOT EXISTS users (
+		id SERIAL PRIMARY KEY,
+		username VARCHAR(255) NOT NULL UNIQUE,
+		password VARCHAR(255) NOT NULL
+	)`
 	_, err := c.DB.Exec(query)
 	if err != nil {
-		return fmt.Errorf("error creaeting users table: %v", err)
+		return fmt.Errorf("error creating users table: %v", err)
 	}
 	return nil
 }
 
-func (c *Container) CreateProductsTable() error {
-	query := `CREATE TABLE products IF NOT EXISTS product (
-    id SERIAL PRIMARY KEY,
-    name TEXT NOT NULL,
-    type TEXT NOT NULL,
-    sku TEXT UNIQUE NOT NULL,
-    image_url TEXT,
-    description TEXT,
-    quantity INTEGER NOT NULL DEFAULT 0,
-    price NUMERIC(10, 2) NOT NULL
-   );`
+func (c *Container) createProductsTable() error {
+	query := `
+	CREATE TABLE IF NOT EXISTS products (
+		id SERIAL PRIMARY KEY,
+		name TEXT NOT NULL,
+		type TEXT NOT NULL,
+		sku TEXT UNIQUE NOT NULL,
+		image_url TEXT,
+		description TEXT,
+		quantity INTEGER NOT NULL DEFAULT 0,
+		price NUMERIC(10, 2) NOT NULL
+	)`
 	_, err := c.DB.Exec(query)
 	if err != nil {
 		return fmt.Errorf("error creating products table: %v", err)
