@@ -2,11 +2,13 @@ package handlers
 
 import (
 	"encoding/json"
+	"net/http"
+	"strconv"
+
 	"github.com/gorilla/mux"
 	"github.com/harshgupta9473/fi/dto"
 	"github.com/harshgupta9473/fi/services"
-	"net/http"
-	"strconv"
+	"github.com/harshgupta9473/fi/utils"
 )
 
 type Handlers struct {
@@ -63,7 +65,9 @@ func (h *Handlers) AddProduct(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 
 	}
-	// return id if success
+	utils.WriteJSON(w,http.StatusOK,map[string]interface{}{
+		"status":
+	})
 }
 
 func (h *Handlers) GetAllProducts(w http.ResponseWriter, r *http.Request) {

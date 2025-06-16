@@ -19,7 +19,7 @@ type Container struct {
 	ProductService services.ProductServiceIntf
 }
 
-func NewContainer(env *configs.Environment) (*Container, error) {
+func NewContainer(env *configs.Config) (*Container, error) {
 	db, err := initDB(env)
 	if err != nil {
 		return nil, err
@@ -28,6 +28,7 @@ func NewContainer(env *configs.Environment) (*Container, error) {
 	container := &Container{
 		DB: db,
 	}
+	
 	err = container.CreateAllTables()
 	if err != nil {
 		return nil, err

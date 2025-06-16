@@ -6,7 +6,7 @@ import (
 	"github.com/harshgupta9473/fi/configs"
 )
 
-func initDB(env *configs.Environment) (*sql.DB, error) {
+func initDB(env *configs.Config) (*sql.DB, error) {
 	db, err := sql.Open("postgres", env.DBConnStr)
 	if err != nil {
 		return nil, fmt.Errorf("error connecting with database: %v", err)
