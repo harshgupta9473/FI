@@ -16,8 +16,8 @@ type Handlers struct {
 
 func NewHandler(productService services.ProductServiceIntf, userService services.UserServiceIntf) *Handlers {
 	return &Handlers{
-		ProductService: *productService,
-		UserService:    *userService,
+		ProductService: productService,
+		UserService:    userService,
 	}
 }
 
@@ -109,7 +109,7 @@ func (h *Handlers) UpdateProductQuantitty(w http.ResponseWriter, r *http.Request
 	if err != nil {
 
 	}
-	product, err, msg := h.ProductService.UpdateProduct(id, quantity.Quantity)
+	product, err, _ := h.ProductService.UpdateProduct(id, quantity.Quantity)
 	if err != nil {
 
 	}
