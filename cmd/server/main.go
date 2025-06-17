@@ -23,12 +23,12 @@ func main() {
 	log.Println("ENV loaded")
 	environment, err := configs.LoadEnvironment()
 	if err != nil {
-		log.Println("error loading environment variables: %v",err)
+		log.Println("error loading environment variables: %v", err)
 		os.Exit(1)
 	}
 	container, err := di.NewContainer(environment)
 	if err != nil {
-		log.Println("error creating new container: %v",err)
+		log.Println("error creating new container: %v", err)
 		os.Exit(1)
 	}
 	handler := handlers.NewHandler(container.ProductService, container.UserService)
@@ -36,7 +36,7 @@ func main() {
 	routes.SetupRoutes(router, handler)
 
 	s := &http.Server{
-		Addr:         ":3001",
+		Addr:         ":8080",
 		Handler:      router,
 		IdleTimeout:  120 * time.Second,
 		ReadTimeout:  5 * time.Second,
@@ -44,7 +44,7 @@ func main() {
 	}
 
 	go func() {
-		log.Println("Listening on port 3001")
+		log.Println("Listening on port 8080")
 		if err := s.ListenAndServe(); err != nil && err != http.ErrServerClosed {
 			log.Fatalf("ListenAndServe error: %v", err)
 		}

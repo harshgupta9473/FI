@@ -1,11 +1,11 @@
 
-
 db_config:
- host: localhost
+ host: db
  port: 5432
- user: postgres
- password: qwerty150
- dbname: makerable
+ user: fi_user
+ password: fi_pass
+ dbname: fi
  sslmode: disable
+
 
 
