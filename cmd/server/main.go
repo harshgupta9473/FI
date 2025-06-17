@@ -31,6 +31,7 @@ func main() {
 		log.Println("error creating new container: %v", err)
 		os.Exit(1)
 	}
+	defer container.Logger.Sync()
 	handler := handlers.NewHandler(container.ProductService, container.UserService)
 	router := mux.NewRouter()
 	routes.SetupRoutes(router, handler)
