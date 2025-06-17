@@ -2,12 +2,13 @@ package configs
 
 import (
 	"fmt"
+	"log"
+
 	"github.com/spf13/viper"
 )
 
 type Config struct {
 	DBConnStr    string `mapstructure:"DB_CONN_STR"`
-	JWTSecretKey string
 }
 
 type Environment struct {
@@ -42,6 +43,7 @@ func LoadEnvironment() (*Config, error) {
 }
 
 func ConnString(c DBConfig) string {
+	log.Println(c)
 	fmt.Printf("Connecting with host=%s port=%d user=%s db=%s\n",
 		c.Host, c.Port, c.User, c.DBName)
 

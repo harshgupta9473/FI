@@ -2,9 +2,9 @@
 db_config:
  host: postgres
  port: 5432
- user: fi_user
+ user: user
  password: fi_pass
- dbname: fidb
+ dbname: database
  sslmode: disable
 
 
