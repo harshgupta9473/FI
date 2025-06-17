@@ -52,13 +52,12 @@ func (h *Handlers) LoginUser(w http.ResponseWriter, r *http.Request) {
 		utils.WriteJSON(w, http.StatusInternalServerError, map[string]string{"error": "Failed to generate token"})
 		return
 	}
-	utils.WriteJSON(w, http.StatusOK, map[string]string{"token": token})
+	utils.WriteJSON(w, http.StatusOK, map[string]string{"access_token": token})
 }
 
 func (h *Handlers) RegisterUser(w http.ResponseWriter, r *http.Request) {
 	ctx, cancel := context.WithTimeout(r.Context(), h.TimeOut*time.Second)
 	defer cancel()
-
 	var user dto.User
 	err := json.NewDecoder(r.Body).Decode(&user)
 	if err != nil {
@@ -71,7 +70,7 @@ func (h *Handlers) RegisterUser(w http.ResponseWriter, r *http.Request) {
 	}
 	err = h.UserService.CreateUserAccount(ctx, &user)
 	if err != nil {
-		utils.WriteJSON(w, http.StatusInternalServerError, map[string]string{"error": err.Error()})
+		utils.WriteJSON(w, 409, map[string]string{"error": err.Error()})
 		return
 	}
 
@@ -80,8 +79,7 @@ func (h *Handlers) RegisterUser(w http.ResponseWriter, r *http.Request) {
 		utils.WriteJSON(w, http.StatusInternalServerError, map[string]string{"error": "Failed to generate token"})
 		return
 	}
-	utils.WriteJSON(w, http.StatusOK, map[string]string{"token": token})
-
+	utils.WriteJSON(w, http.StatusCreated, map[string]string{"access_token": token})
 }
 
 func (h *Handlers) AddProduct(w http.ResponseWriter, r *http.Request) {
@@ -98,12 +96,9 @@ func (h *Handlers) AddProduct(w http.ResponseWriter, r *http.Request) {
 		utils.WriteJSON(w, http.StatusInternalServerError, map[string]string{"error": err.Error()})
 		return
 	}
-	utils.WriteJSON(w, http.StatusOK, map[string]interface{}{
-		"status": "success",
-		"data": map[string]interface{}{
-			"id": id,
-		},
-	})
+	utils.WriteJSON(w, http.StatusCreated, map[string]interface{}{
+    "product_id": id,
+})
 }
 
 func (h *Handlers) GetAllProducts(w http.ResponseWriter, r *http.Request) {
@@ -138,10 +133,7 @@ func (h *Handlers) GetAllProducts(w http.ResponseWriter, r *http.Request) {
 		utils.WriteJSON(w, http.StatusInternalServerError, map[string]string{"error": err.Error()})
 		return
 	}
-	utils.WriteJSON(w, http.StatusOK, map[string]interface{}{
-		"status": "success",
-		"data":   products,
-	})
+	utils.WriteJSON(w, http.StatusOK, products)
 }
 
 func (h *Handlers) UpdateProductQuantitty(w http.ResponseWriter, r *http.Request) {
@@ -174,8 +166,7 @@ func (h *Handlers) UpdateProductQuantitty(w http.ResponseWriter, r *http.Request
 		return
 	}
 	utils.WriteJSON(w, http.StatusOK, map[string]interface{}{
-		"status":  "success",
-		"product": product,
-	})
+    "quantity": product.Quantity,
+   })
 
 }
