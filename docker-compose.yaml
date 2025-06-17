@@ -11,13 +11,19 @@ services:
       - postgres_data:/var/lib/postgresql/data
     ports:
       - "5432:5432"
+    healthcheck:
+      test: ["CMD" "pg_isready","-U","fi_user"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
   app:
     build: .
     ports:
       - "8080:8080"
     depends_on:
-      - db
+       db :
+         condition: service_healthy
     env_file:
       - .env
 
