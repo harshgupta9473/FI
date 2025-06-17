@@ -4,7 +4,7 @@ import (
 	"database/sql"
 	"fmt"
 	"github.com/harshgupta9473/fi/configs"
-	logger2 "github.com/harshgupta9473/fi/logger"
+	"github.com/harshgupta9473/fi/logger"
 	"github.com/harshgupta9473/fi/repository"
 	"github.com/harshgupta9473/fi/services"
 )
@@ -12,7 +12,7 @@ import (
 type Container struct {
 	DB *sql.DB
 
-	Logger *logger2.Logger
+	Logger *logger.Logger
 
 	TableCreated bool
 
@@ -32,12 +32,10 @@ func NewContainer(env *configs.Config) (*Container, error) {
 	container := &Container{
 		DB: db,
 	}
-
-	logger, err := logger2.NewLogger()
+	container.Logger, err = logger.NewLogger()
 	if err != nil {
 		return nil, fmt.Errorf("error in initializing the logger: %v", err)
 	}
-	container.Logger = logger
 
 	err = container.CreateAllTables()
 	if err != nil {
@@ -50,11 +48,11 @@ func NewContainer(env *configs.Config) (*Container, error) {
 }
 
 func (c *Container) initRepositories() {
-	c.UserRepository = repository.NewUsersRepository(c.DB)
-	c.ProductRepository = repository.NewProductsRepository(c.DB)
+	c.UserRepository = repository.NewUsersRepository(c.DB, c.Logger)
+	c.ProductRepository = repository.NewProductsRepository(c.DB, c.Logger)
 }
 
 func (c *Container) initServices() {
-	c.UserService = services.NewUserService(c.UserRepository)
-	c.ProductService = services.NewProductService(c.ProductRepository)
+	c.UserService = services.NewUserService(c.UserRepository, c.Logger)
+	c.ProductService = services.NewProductService(c.ProductRepository, c.Logger)
 }
