@@ -33,7 +33,7 @@ func (u *UserService) CreateUserAccount(ctx context.Context, user *dto.User) err
 	if err != nil {
 		u.logger.Error(err, "failed to check if username exists", zap.String("username", user.Username))
 
-		return fmt.Errorf("error in checking the username status i.e. if it exists or not")
+		return fmt.Errorf("failed to check if username exists")
 	}
 	if userDB != nil {
 		u.logger.Info("username already exists", zap.String("username", user.Username))

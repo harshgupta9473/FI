@@ -49,6 +49,7 @@ func (p *ProductService) GetALLProducts(ctx context.Context, page int, limit int
 	if products == nil {
 		return []*dto.Product{}, nil
 	}
+	
 	return products, nil
 }
 
