@@ -1,10 +1,11 @@
 
 services:
-  db:
-    image: postgres:14
+  postgres:
+    image: postgres:15
+    container_name: fi_db
     restart: always
     environment:
-      POSTGRES_DB: fi
+      POSTGRES_DB: fidb
       POSTGRES_USER: fi_user
       POSTGRES_PASSWORD: fi_pass
     volumes:
@@ -12,7 +13,7 @@ services:
     ports:
       - "5432:5432"
     healthcheck:
-      test: ["CMD" "pg_isready","-U","fi_user"]
+      test: ["CMD" ,"pg_isready","-U","fi_user"]
       interval: 5s
       timeout: 5s
       retries: 5
@@ -22,8 +23,8 @@ services:
     ports:
       - "8080:8080"
     depends_on:
-       db :
-         condition: service_healthy
+       -postgres :
+            condition: service_healthy
     env_file:
       - .env
 
