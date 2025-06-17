@@ -12,6 +12,7 @@ A Go-based inventory management backend with user authentication and product API
 - **DTOs** define strict request/response shapes.
 - **Middleware** adds cross-cutting concerns like JWT authentication.
 - **Dependency Injection (DI)** manages wiring of components.
+- **Logger** uses structured logging (Zap) across all layers for consistent and easy-to-search logs.
 
 This project follows Clean Architecture, promoting:
 
