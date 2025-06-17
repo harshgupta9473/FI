@@ -1,4 +1,4 @@
-package server
+package main
 
 import (
 	"context"
@@ -23,10 +23,12 @@ func main() {
 	log.Println("ENV loaded")
 	environment, err := configs.LoadEnvironment()
 	if err != nil {
+		log.Println("error loading environment variables: %v",err)
 		os.Exit(1)
 	}
 	container, err := di.NewContainer(environment)
 	if err != nil {
+		log.Println("error creating new container: %v",err)
 		os.Exit(1)
 	}
 	handler := handlers.NewHandler(container.ProductService, container.UserService)

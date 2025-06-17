@@ -4,6 +4,8 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+	"log"
+
 	"github.com/harshgupta9473/fi/dto"
 )
 
@@ -47,6 +49,7 @@ func (u *UsersRepository) GetUserByUsername(ctx context.Context, username string
 		if errors.Is(err, sql.ErrNoRows) {
 			return nil, nil
 		}
+		log.Println(err)
 		return nil, err
 	}
 

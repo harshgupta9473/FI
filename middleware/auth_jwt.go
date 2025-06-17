@@ -18,7 +18,7 @@ func AuthMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		tokenHeader := r.Header.Get("Authorization")
 		if tokenHeader == "" {
-
+			return
 		}
 		claim, err := validateJWTToken(tokenHeader)
 		if err != nil {

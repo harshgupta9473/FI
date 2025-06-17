@@ -4,7 +4,8 @@ db_config:
  host: localhost
  port: 5432
  user: postgres
- password: abcdefgh150
+ password: qwerty150
  dbname: makerable
  sslmode: disable
+
 

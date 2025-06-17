@@ -12,7 +12,7 @@ type Config struct {
 
 
 type Environment struct{
-	DBConfig   DBConfig `json:"db_config"`
+	DBConfig   DBConfig `mapstructure:"db_config" json:"db_config"`
 }
 
 
@@ -47,6 +47,9 @@ func LoadEnvironment() (*Config, error) {
 
 
 func  ConnString(c DBConfig) string {
+	fmt.Printf("Connecting with host=%s port=%d user=%s db=%s\n",
+    c.Host, c.Port, c.User, c.DBName)
+
     return fmt.Sprintf("postgres://%s:%s@%s:%d/%s?sslmode=%s",
         c.User, c.Password, c.Host, c.Port, c.DBName, c.SSLMode)
 }

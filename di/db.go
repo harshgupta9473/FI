@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"fmt"
 	"github.com/harshgupta9473/fi/configs"
+	_ "github.com/lib/pq"
 )
 
 func initDB(env *configs.Config) (*sql.DB, error) {
